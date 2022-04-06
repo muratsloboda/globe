@@ -24,6 +24,7 @@
     color: `#${Math.round(Math.random() * Math.pow(2, 24)).toString(16).padStart(6, '0')}`,
   }));
 
+  const targetEl = document.getElementById('globe');
   const backgroundColor = '#0a2540';
   const globeColor = '#0c203f';
   const countriesColor = '#3d72a5';
@@ -31,13 +32,16 @@
   const height = 700;
   const countriesResolution = 4;
   const countriesGap = 0.5;
+  const showAtmosphere = false;
+  const atmosphereColor = '#ff0000';
 
   fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json').then(res => res.json()).then(countries => {
     const globe = Globe()
             .width(width)
             .height(height)
             .backgroundColor(backgroundColor)
-            .showAtmosphere(false)
+            .showAtmosphere(showAtmosphere)
+            .atmosphereColor(atmosphereColor)
             .arcsData(arcsData)
             .arcColor('color')
             .arcDashLength(() => Math.random())
@@ -47,12 +51,15 @@
             .hexPolygonResolution(countriesResolution)
             .hexPolygonMargin(countriesGap)
             .hexPolygonColor(() => countriesColor)
-            (document.getElementById('globe'))
+            (targetEl)
+
+    const globeMaterial = globe.globeMaterial();
+    globeMaterial.color.set(globeColor);
 
     const controls = globe.controls();
     controls.autoRotate = true;
     controls.autoRotateSpeed = 2;
-    controls.enabled = false
+    controls.enableZoom = false;
   })
 </script>
 </body>
