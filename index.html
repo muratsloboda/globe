@@ -1,18 +1,58 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Pandemic Globe</title>
-    <style>
-      body {
-        margin: 0;
-      }
-      canvas {
-        display: block;
-      }
-    </style>
-  </head>
-  <body>
-    <script src="./main.js"></script>
-  </body>
-</html>
+<head>
+  <title>Globe</title>
+  <style>
+    body {
+      margin: 0;
+    }
+    #globe {
+      margin-left: 100px;
+    }
+  </style>
+  <script src="https://unpkg.com/globe.gl"></script>
+</head>
+
+<body>
+<div id="globe"></div>
+
+<script>
+  const N = 20;
+  const arcsData = [...Array(N).keys()].map(() => ({
+    startLat: (Math.random() - 0.5) * 180,
+    startLng: (Math.random() - 0.5) * 360,
+    endLat: (Math.random() - 0.5) * 180,
+    endLng: (Math.random() - 0.5) * 360,
+    color: `#${Math.round(Math.random() * Math.pow(2, 24)).toString(16).padStart(6, '0')}`,
+  }));
+
+  const backgroundColor = '#0a2540';
+  const globeColor = '#0c203f';
+  const countriesColor = '#3d72a5';
+  const width = 700;
+  const height = 700;
+  const countriesResolution = 4;
+  const countriesGap = 0.5;
+
+  fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json').then(res => res.json()).then(countries => {
+    const globe = Globe()
+            .width(width)
+            .height(height)
+            .backgroundColor(backgroundColor)
+            .showAtmosphere(false)
+            .arcsData(arcsData)
+            .arcColor('color')
+            .arcDashLength(() => Math.random())
+            .arcDashGap(() => Math.random())
+            .arcDashAnimateTime(() => Math.random() * 4000 + 500)
+            .hexPolygonsData(countries.features)
+            .hexPolygonResolution(countriesResolution)
+            .hexPolygonMargin(countriesGap)
+            .hexPolygonColor(() => countriesColor)
+            (document.getElementById('globe'))
+
+    const controls = globe.controls();
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 2;
+    controls.enabled = false
+  })
+</script>
+</body>
